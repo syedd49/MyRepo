@@ -1,0 +1,979 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1033{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
+{\*\generator Riched20 10.0.17763}\viewkind4\uc1 
+\pard\sa200\sl276\slmult1\f0\fs22\lang9 Docker Certified Associated;\par
+\par
+\par
+40.5%\par
+Great Start!\par
+You did not pass the challenge on this attempt. This challenge is now locked and can be unlocked by using gems or by completing all of the recommended activities.\par
+lock This challenge is now locked.\par
+Linux Academy\par
+Report Card\par
+Expectations\par
+Score\par
+1. Installation and Configuration\par
+40 %\par
+2. Image Creation, Management, and Registry\par
+30 %\par
+3. Orchestration\par
+60 %\par
+4. Storage and Volumes\par
+60 %\par
+5. Networking\par
+30 %\par
+6. Security\par
+20 %\par
+Exam Breakdown\par
+Installation and Configuration\par
+1.\par
+What procedure should we follow to upgrade the Docker engine on an Ubuntu server?\par
+\par
+A. Stop Docker, remove the packages, and then reinstall the packages with a newer version.\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+We don't need to stop Docker or remove the packages before upgrading.\par
+\par
+B. Stop Docker, then install the packages with the newer version.\par
+\par
+C. Remove all containers, stop Docker, and then install the newer version.\par
+\par
+D. Install newer versions of the docker-ce and docker-ce-cli packages.\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+We must install newer versions of the packages in order to upgrade Docker.\par
+\par
+2.\par
+Sara wants to run a container using the busybox image, and she wants to pass a custom command to the container: echo Docker is great!. Which of the following commands will accomplish this?\par
+\par
+A. docker run busybox ["echo", "Docker is great!"]\par
+\par
+B. docker run busybox echo Docker is great!\par
+\par
+done Correct\par
+C. docker run busybox -c echo Docker is great!\par
+\par
+D. docker run busybox -cmd echo Docker is great!\par
+\par
+3.\par
+What Linux feature does Docker use in order to limit memory usage for containers?\par
+\par
+A. The mem namespace.\par
+\par
+B. Control groups (cgroups)\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+Docker uses cgroups to limit memory usage for containers.\par
+\par
+C. Capabilities\par
+\par
+D. Namespaces\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+Namespaces are used for isolation, not limiting memory usage.\par
+\par
+4.\par
+What is the difference between a manager and a worker in Docker swarm?\par
+\par
+A. Managers create new workers.\par
+\par
+B. Managers handle networking, while workers handle containers.\par
+\par
+C. Managers never execute containers, workers do.\par
+\par
+D. Managers control the cluster, while workers only execute workloads.\par
+\par
+done Correct\par
+5.\par
+Nancy wants to run a container using an image called foo. She wants to publish the container's port 3001 to port 5050 on the host. Which of the following commands will accomplish this?\par
+\par
+A. docker run -d -p 5050:3001 foo\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+This command will run the container with port 3001 published to host and listen on 5050.\par
+\par
+B. docker run --port 5050:3001 foo\par
+\par
+C. docker run -d -p 3001:5050 foo\par
+\par
+D. docker run foo -p 5050:3001\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+Since options such as -p must be placed before the image name, this will not work nor accomplish the task at hand.\par
+\par
+6.\par
+We have set a value for "log-level" in /etc/docker/daemon.json. How would we set up the same value by passing a flag to dockerd instead?\par
+\par
+A. Pass the --log-level flag to dockerd.\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+The dockerd flags share the same names as the values set in /etc/docker/daemon.json.\par
+\par
+B. Pass the --debug flag to dockerd.\par
+\par
+C. Pass the --log flag to dockerd.\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+This dockerd flag would not permit us to set up the same value.\par
+\par
+D. Pass the --logging flag to dockerd.\par
+\par
+7.\par
+How should we give a user permission to interact with the Docker daemon on a machine without giving them unnecessary additional access?\par
+\par
+A. Add the user to the docker group.\par
+\par
+done Correct\par
+B. Give the user the ability to run docker commands with sudo.\par
+\par
+C. Have them log in as the docker user.\par
+\par
+D. Give the user the root user credentials so they can run docker commands as root.\par
+\par
+8.\par
+Which Docker edition would we choose for obtaining the latest Docker Engine updates?\par
+\par
+A. Docker Developer Edition (DE)\par
+\par
+B. Docker Community Edition (CE)\par
+\par
+C. Either Docker CE or Docker EE\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+Docker CE and EE both get all the latest engine updates.\par
+\par
+D. Docker Enterprise Edition (EE)\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+Docker EE receives all of the latest engine updates, but so does Docker CE.\par
+\par
+9.\par
+Where can we find a repository URL for installing the Docker Enterprise Edition (EE)?\par
+\par
+A. Docker Marketplace\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+This place does not exist.\par
+\par
+B. Docker Enterprise Hub\par
+\par
+C. Docker Hub\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+If we have a Docker EE license, then we can pinpoint and retrieve a repository URL on Docker Hub.\par
+\par
+D. Docker Trusted Registry\par
+\par
+10.\par
+Amanda wants to execute a one-time job using a Docker container. However, occasionally, this job fails and needs to restart. Amanda doesn't want to restart it manually if it fails. Which command should she use to make sure that the container executes the one-time job successfully?\par
+\par
+A. docker run --recover-failure cleanup-job\par
+\par
+B. docker run --restart failure-only cleanup-job\par
+\par
+C. docker run --restart unless-stopped cleanup-job\par
+\par
+D. docker run --restart on-failure cleanup-job\par
+\par
+done Correct\par
+Image Creation, Management, and Registry\par
+1.\par
+What type of data exists in the writable file system layer created by a container?\par
+\par
+A. It would be only the data from the base image.\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+The container layer will consist of the changes made to the base image data.\par
+\par
+B. The data would consist of only container logs.\par
+\par
+C. A snapshot of all of the data in its current state would reside in the layer.\par
+\par
+D. The data would consist of only changes from the previous layer that were made by the container.\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+Each file system layer contains only the changes made from the previous layer.\par
+\par
+2.\par
+Describe what the RUN directive does.\par
+\par
+A. The RUN directive automatically runs a command when a new container gets created.\par
+\par
+B. The RUN directive executes a command on the host when building an image.\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+The RUN directive does not execute anything directly on the host.\par
+\par
+C. The RUN directive executes a command and commits the resulting changed files as a new layer in the image.\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+This accurately describes what RUN does.\par
+\par
+D. The RUN directive sets the default command for the image.\par
+\par
+3.\par
+How is the ADD directive different from COPY? (Choose two)\par
+\par
+A. The ADD directive can pull a file from an external URL.\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+The ADD directive can pull from a URL while COPY cannot.\par
+\par
+B. The ADD directive can extract an archive into the image.\par
+\par
+done Correct\par
+C. The ADD directive can transfer a specific file between build stages.\par
+\par
+D. The ADD directive can transfer files over to a specific location inside the image.\par
+\par
+4.\par
+Which of the following statements truly applies to the ENV directive?\par
+\par
+A. It sets environment variables that are only visible at the container runtime.\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+The ENV directive's environment variables are also visible during the build in later build steps.\par
+\par
+B. It sets environment variables that are made available in subsequent build steps and to containers at the runtime.\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+The ENV directive sets environment variables, and they're visible during subsequent build steps and at the container runtime.\par
+\par
+C. It sets an environment variable on the host while the container is running.\par
+\par
+D. It sets environment variables that are only visible during later build steps.\par
+\par
+5.\par
+What does the FROM directive do?\par
+\par
+A. It sets a base image that can be used as a platform to begin builds.\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+The FROM directive sets the base image.\par
+\par
+B. It pulls a file from an external source into the image.\par
+\par
+C. It sets the working directory of containers ran using the image.\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+TheWORKDIR sets this up, not the FROM directive.\par
+\par
+D. It indicates the build location of where the image is.\par
+\par
+6.\par
+What does the HEALTHCHECK directive do?\par
+\par
+A. It sets a command that will be used to fix the container if it becomes unhealthy.\par
+\par
+B. It restarts the container if it becomes unhealthy.\par
+\par
+C. It sets a command that will be used to inform the container of the health status of the docker daemon.\par
+\par
+D. It sets a command that will be used by the Docker daemon to determine whether the container is healthy.\par
+\par
+done Correct\par
+7.\par
+Which Dockerfile directive would set up the base image that can serve as our starting point for establishing a new image?\par
+\par
+A. START\par
+\par
+B. FROM\par
+\par
+done Correct\par
+C. BASE\par
+\par
+D. ARG\par
+\par
+8.\par
+Which of the following commands will build an image from a Dockerfile located in the current directory and tag it as my-custom-image:1?\par
+\par
+A. docker build -t my-custom-image:1 .\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+This command will build the image and tag it appropriately.\par
+\par
+B. docker build .\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+This command will build the image, but will not create the tag.\par
+\par
+C. docker build -tag my-custom-image:1 .\par
+\par
+D. docker build -tag my-custom-image:1\par
+\par
+9.\par
+Which of the following is true about building docker images?\par
+\par
+A. Only layers that have changed since the last build (and any following layers) are built.\par
+\par
+done Correct\par
+B. Every layer of the image is re-built every time docker build is executed.\par
+\par
+C. Every Dockerfile can have only one FROM directive.\par
+\par
+D. Docker images are built using Docker Compose files.\par
+\par
+10.\par
+Which of the following is true about the creation of private Docker registries?\par
+\par
+A. We can create our own registry by running a container with the registry image.\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+Running this image will create a private Docker registry.\par
+\par
+B. We need a Docker EE license to have our own private registry created.\par
+\par
+C. We need Docker Trusted Registry (DTR) present if we want to generate a private registry.\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+Docker Trusted Registry is a Docker Enterprise Edition (EE) registry with additional features, but we can run a registry without it.\par
+\par
+D. We cannot secure a private registry in Docker Community Edition (CE).\par
+\par
+Orchestration\par
+1.\par
+We have some containerized software that needs to have a reference to the hostname of the node that the software is running on. Which of the following commands will let us pass the node hostname as an environment variable into each task in a service?\par
+\par
+A. docker service create -e NODE_HOSTNAME nginx\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+This command will not pass the hostname of the node.\par
+\par
+B. docker service create --env NODE_HOSTNAME="\{\{Hostname\}\}" nginx\par
+\par
+C. docker service create --env NODE_HOSTNAME="\{\{.Node.Hostname\}\}" nginx\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+This command will create an environment variable in each task that contains the node hostname.\par
+\par
+D. docker service create --pass-node-hostname=true nginx\par
+\par
+2.\par
+Which flag allows us to return specific fields with docker inspect?\par
+\par
+A. --pretty\par
+\par
+B. --format\par
+\par
+done Correct\par
+C. --field-limit\par
+\par
+D. --filter\par
+\par
+3.\par
+How would we rotate a docker swarm unlock-key and ensure that all nodes receive the new key?\par
+\par
+A. We would run the docker swarm unlock-key --rotate command on one manager node.\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+This command will automatically rotate the key and handle all orchestration between nodes.\par
+\par
+B. We would generate a new key and save it in a file located at /etc/docker/swarm/unlock.key.\par
+\par
+C. We would run the docker swarm unlock-key --rotate command on all manager nodes.\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+This command only needs to be run on one node, and the key's rotation will be propagated automatically across all nodes in the cluster.\par
+\par
+D. We can use the docker swarm unlock command.\par
+\par
+4.\par
+Eric has an application that consists of multiple different containers that interact with one another. What should he use to manage this application in a Docker Swarm?\par
+\par
+A. Eric should use a task.\par
+\par
+B. Eric should use docker-compose.\par
+\par
+C. Eric should use a stack.\par
+\par
+done Correct\par
+D. Eric should use a service with multiple tasks.\par
+\par
+5.\par
+Which of the following commands would successfully change the number of replicas to 5 in a service called my-service? (Choose two)\par
+\par
+A. docker service --replicas 5 my-service\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+This command will fail.\par
+\par
+B. docker service update --replicas 5 my-service\par
+\par
+done Correct\par
+C. docker service scale my-service=5\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+This command will update the number of replicas to 5.\par
+\par
+D. docker task create --service my-service --replicas 5\par
+\par
+6.\par
+What command should we use if we want to view logs for all of the tasks in a service called my-service?\par
+\par
+A. docker task logs my-service\par
+\par
+B. docker logs my-service\par
+\par
+C. docker service logs my-service\par
+\par
+done Correct\par
+D. docker container logs my-service\par
+\par
+7.\par
+What tool should we use if we need to manage a multi-container application as a unit on a single Docker host?\par
+\par
+A. We should use Docker Swarm.\par
+\par
+B. We should execute docker-run.\par
+\par
+C. We should use a Docker stack.\par
+\par
+D. We should use Docker Compose.\par
+\par
+done Correct\par
+8.\par
+We have seven Swarm manager nodes total. How should we distribute them across just three availability zones?\par
+\par
+A. 5-1-1\par
+\par
+B. 4-2-1\par
+\par
+C. 3-2-2\par
+\par
+done Correct\par
+D. 6-1-0\par
+\par
+9.\par
+How would we back up the metadata for Docker Swarm?\par
+\par
+A. We can run the swarm image with the backup command.\par
+\par
+B. We can back up the contents of /usr/local/swarm.\par
+\par
+C. While the Docker daemon stops, we can back up the contents of /var/lib/docker/swarm on a Swarm manager.\par
+\par
+done Correct\par
+D. We can back up the contents of /etc/docker/swarm.\par
+\par
+10.\par
+In terms of establishing a high level of availability, what is the benefit of having more manager nodes present in a swarm?\par
+\par
+A. It would help bolster fault-tolerance.\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+Increasing the number of manager nodes means that more nodes can be lost while still maintaining a functional cluster.\par
+\par
+B. The cluster would be easier to set up.\par
+\par
+C. It would result in being more efficient with resources.\par
+\par
+D. It would allow for more worker nodes to be present.\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+We do not need more manager nodes to generate more worker nodes.\par
+\par
+Storage and Volumes\par
+1.\par
+We have a Docker host that is running low on storage. What command could help us identify how the host is using storage?\par
+\par
+A. docker system df\par
+\par
+done Correct\par
+B. docker container ls\par
+\par
+C. docker image inspect\par
+\par
+D. docker image prune\par
+\par
+2.\par
+Which of the following commands would we use to automatically identify and delete images that are not being used?\par
+\par
+A. docker image prune\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+This command will delete any dangling images on the system.\par
+\par
+B. docker image rm --all\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+This command contains --all, which is not a valid flag here.\par
+\par
+C. docker image rm\par
+\par
+D. docker image rm -a\par
+\par
+3.\par
+Which of the following commands would we use to retrieve a list of volumes on the current machine?\par
+\par
+A. docker volume ps\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+This is not a valid command.\par
+\par
+B. docker volume rm\par
+\par
+C. docker volume inspect\par
+\par
+D. docker volume ls\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+This command will return a list of volumes on the current machine.\par
+\par
+4.\par
+How would we create a volume called new-volume without running a container?\par
+\par
+A. We would run docker volume create new-volume.\par
+\par
+done Correct\par
+B. We would use docker run -v new-volume:/tmp nginx.\par
+\par
+C. We would run docker run --rm -v new-volume:/tmp nginx.\par
+\par
+D. We would run docker create volume new-volume.\par
+\par
+5.\par
+Which storage driver is the default for CentOS 7 and earlier?\par
+\par
+A. overlay2\par
+\par
+B. aufs\par
+\par
+C. devicemapper\par
+\par
+done Correct\par
+D. loop-lvm\par
+\par
+6.\par
+Which storage driver is the default for current versions of CentOS/RHEL and Ubuntu?\par
+\par
+A. aufs\par
+\par
+B. direct-lvm\par
+\par
+C. devicemapper\par
+\par
+D. overlay2\par
+\par
+done Correct\par
+7.\par
+Anastasia has created a container with a volume called shared-data. She wants to create a new container that can access the same data as the first container, but she wants this new container only to be able to read the data, not modify it. How can she accomplish this?\par
+\par
+A. Anastasia can use docker run --name new-container -v shared-data:/tmp:ro nginx.\par
+\par
+done Correct\par
+B. This task is not possible for Anastasia to complete because we cannot mount the same volume to two containers.\par
+\par
+C. Anastasia can use docker run --name new-container -v shared-data:/tmp nginx.\par
+\par
+D. Anastasia can create a bind mount for the new container that points to the physical location of the shared volume on the host.\par
+\par
+8.\par
+Which of the following commands may result in the creation of a new named volume?\par
+\par
+A. docker run -v /my-vol:/tmp:create nginx\par
+\par
+B. docker run -v /my-vol:/tmp nginx\par
+\par
+C. docker run --mount source=/my-vol,destination=/tmp nginx\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+This command will create a bind mount and will never create a volume.\par
+\par
+D. docker run -v my-vol:/tmp nginx\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+This command will create a new volume called my-vol if one does not already exist under that name.\par
+\par
+9.\par
+Which of the following commands would we use to locate the data for a volume on the host?\par
+\par
+A. docker volume locate &lt;volume&gt;\par
+\par
+B. docker volume navigate &lt;volume&gt;\par
+\par
+C. docker volume inspect &lt;volume&gt;\par
+\par
+done Correct\par
+D. docker volume logs &lt;volume&gt;\par
+\par
+10.\par
+Which of the following is true of filesystem storage models? (Choose two)\par
+\par
+A. They are used by overlay2 and aufs.\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+The overlay2 and aufs storage drivers both use filesystem storage models.\par
+\par
+B. They use an external, object-based store.\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+This is true of object storage, not filesystem storage.\par
+\par
+C. They are efficient with write-heavy workloads.\par
+\par
+D. They store data in regular files on the host machine.\par
+\par
+done Correct\par
+Networking\par
+1.\par
+Which of the following is true of a service that has a port published in ingress mode?\par
+\par
+A. The service will only listen on worker nodes that are running the service's tasks and manager nodes.\par
+\par
+B. The service will only listen on nodes that are running tasks associated with the service.\par
+\par
+C. The service will listen on all nodes on the cluster.\par
+\par
+done Correct\par
+D. The service will only listen on a manager.\par
+\par
+2.\par
+Which of the following statements about the overlay network driver is accurate?\par
+\par
+A. The network is set up on every node in the cluster as soon as the network faces creation.\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+The network is only set up on nodes that are running tasks which require the network's presence.\par
+\par
+B. Networking components are created on nodes dynamically when tasks get scheduled on the node.\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+The overlay network driver dynamically creates networking components on the node when a relevant task gets scheduled on that node.\par
+\par
+C. The overlay driver only allows communication between containers running on the same host.\par
+\par
+D. The network must be set up manually on each node.\par
+\par
+3.\par
+What concept in the Docker Container Network Model (CNM) refers to an isolated unit containing all networking components associated with a single container?\par
+\par
+A. Network driver\par
+\par
+B. Network\par
+\par
+C. Endpoint\par
+\par
+D. Sandbox\par
+\par
+done Correct\par
+4.\par
+When creating a container, how would we specify that the container should be attached to an existing network called my-network?\par
+\par
+A. We can use docker run --network my-network nginx.\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+This command will attach the container to an existing network called my-network.\par
+\par
+B. We can use docker run --network-alias web nginx.\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+The --network-alias flag will not work for the task at hand.\par
+\par
+C. We can use docker run -n my-network nginx.\par
+\par
+D. We can use docker run --attach my-network nginx.\par
+\par
+5.\par
+Which of the following commands will create a new bridge network?\par
+\par
+A. docker network create --network-driver bridge my-network\par
+\par
+B. docker network create my-network\par
+\par
+done Correct\par
+C. docker network create --driver overlay my-network\par
+\par
+D. docker network create --network bridge my-network\par
+\par
+6.\par
+Which of the following is a valid method that we can use for setting the default DNS server for all containers on a host?\par
+\par
+A. We can edit the /etc/hosts file on the host.\par
+\par
+B. We can use docker config set dns.\par
+\par
+C. We can use the --dns flag with docker run.\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+This method only sets the DNS for a single container.\par
+\par
+D. We can set "dns" in /etc/docker/daemon.json.\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+This method will set the default DNS for all containers on the host.\par
+\par
+7.\par
+Which component of the Docker Container Networking Model (CNM) is responsible for allocating IP addresses within Docker networks?\par
+\par
+A. The IP Address Management (IPAM) Driver is responsible.\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+The IPAM driver handles IP allocation.\par
+\par
+B. The network driver is responsible.\par
+\par
+C. The Docker network is responsible.\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+A Docker network is a concept and does not implement the actual work of assigning IP addresses.\par
+\par
+D. A Docker Swarm manager is responsible.\par
+\par
+8.\par
+What component of the Docker Container Networking Model (CNM) refers to a collection of endpoints that can communicate with one another?\par
+\par
+A. Network\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+A network is a bridge that allows endpoints plus containers to communicate with one another.\par
+\par
+B. Sandbox\par
+\par
+C. Network device\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+Network devices sometimes are leveraged in a few Docker networking implementations, but they are not the concept that ultimately connects endpoints in the Container Networking Model (CNM).\par
+\par
+D. IP Address Management (IPAM) Driver\par
+\par
+9.\par
+Which of the following network drivers is the default for connecting containers on the same host?\par
+\par
+A. overlay\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+The overlay network driver connects containers on the same or different hosts.\par
+\par
+B. host\par
+\par
+C. macvlan\par
+\par
+D. bridge\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+The bridge network driver is the default and is used to connect containers on the same host.\par
+\par
+10.\par
+Amanda is having some network issues and needs to do some troubleshooting. How can she inject a nicolaka/netshoot container into the sandbox of an existing container called nginx-container?\par
+\par
+A. Amanda can use docker run --network nginx-container nicolaka/netshoot.\par
+\par
+B. Amanda can use docker run --inject-container nginx-container nicolaka/netshoot.\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+This is not a valid command; therefore, it will fail to accomplish the task at hand.\par
+\par
+C. Amanda can use docker run --network-debug nginx-container nicolaka/netshoot.\par
+\par
+D. Amanda can use docker run --network container:nginx-container nicolaka/netshoot.\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+This command will inject the netshoot container into the sandbox of the existing container.\par
+\par
+Security\par
+1.\par
+How can you enable Docker Content Trust (DCT) in Docker Community Edition (CE)?\par
+\par
+A. Set the CONTENT_TRUST environment variable to 1.\par
+\par
+B. Set the DOCKER_CONTENT_TRUST environment variable to 1.\par
+\par
+done Correct\par
+C. Set "content-trust": true in /etc/docker/daemon.json.\par
+\par
+D. Pass the --content-trust flag to dockerd.\par
+\par
+2.\par
+What is the name of Docker feature that enables us to sign images and verify image signatures before running them?\par
+\par
+A. Docker Image Trust\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+Docker Image Trust does not exist.\par
+\par
+B. Docker Content Trust\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+Docker Content Trust allows us to sign images and verify signatures before running them.\par
+\par
+C. Docker Trusted Registry\par
+\par
+D. Docker registry\par
+\par
+3.\par
+Which of the following statements about Docker Content Trust (DCT) is accurate?\par
+\par
+A. When Docker Content Trust is enabled, unsigned images will not be allowed to run on the system.\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+Docker Content Trust enforces the rule that only signed images are run or pulled.\par
+\par
+B. Docker Content Trust requires a Docker Enterprise Edition (EE) license.\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+Docker Content Trust does not require Docker EE.\par
+\par
+C. We need to implement a trusted Public Key Infrastructure (PKI) to sign images.\par
+\par
+D. Only images stored on Docker Hub can be signed.\par
+\par
+4.\par
+What Linux feature does Docker use to allow containers to listen on ports lower than 1024 without running as root on the host?\par
+\par
+A. Namespaces\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+Namespaces are not used to provide this functionality.\par
+\par
+B. Control Groups\par
+\par
+C. Linux jails\par
+\par
+D. Capabilities\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+Capabilities are used by Docker to provide granular permissions to container processes, such as listening on low ports without the need for root access.\par
+\par
+5.\par
+Tracy has a Docker Trusted Registry (DTR), and her development team has been mistakenly overwriting images in a repository by pushing a different image with an existing tag. How can she prevent this from happening?\par
+\par
+A. Tracy can remove the team's access to the registry.\par
+\par
+B. Tracy can make the repository private.\par
+\par
+C. Tracy can back up the registry.\par
+\par
+close Your Answer\par
+forum\par
+Why is this incorrect?\par
+Backups would allow overwritten images to be retrieved, but would not prevent the problem from happening in the first place.\par
+\par
+D. Tracy can mark the repository as immutable.\par
+\par
+done Correct\par
+forum\par
+Why is this correct?\par
+Marking the repository as immutable will prevent her team from overwriting existing tags.\par
+}
+ 
