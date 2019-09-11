@@ -1,0 +1,769 @@
+Docker Install: Ubuntu
+
+This demo was created using an Ubuntu cloud server.
+
+If you are not running this install on Linux Academy, ensure that your kernel is running version 3.10 or higher by running the uname -r command:
+
+ uname -r
+4.4.0-1063-aws
+Setting up the Repository
+Ensure your apt package index is up to date.
+
+sudo apt-get update
+
+Install the following apt packages to allow apt to use a repository over HTTPS:
+
+sudo apt-get install \ apt-transport-https \ ca-certificates \ curl \ software-properties-common
+
+Add Docker’s official GPG key:
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+Verify that the GPG key fingerprint matches. As of publishing this guide, the fingerprint is 9DC8 5822 9FC7 DD38 854A E2D8 8D81 803C 0EBF CD88:
+
+sudo apt-key fingerprint 0EBFCD88
+
+pub   4096R/0EBFCD88 2017-02-22
+      Key fingerprint = 9DC8 5822 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88
+uid   Docker Release (CE deb) <docker@docker.com>
+sub   4096R/F273FCD8 2017-02-22 
+
+Add the repository using the add-apt-repository command:
+
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+Install Docker Community Edition
+Update the apt package index using the apt-get update command:
+
+ sudo apt-get update
+
+Install Docker Community Edition using the apt-get install docker-ce command:
+
+ sudo apt-get install docker-ce
+
+Confirm Docker installed correctly using the docker run command:
+
+ sudo docker run hello-world
+
+Optional
+For best practices, do not use root. Instead, add your user to the Docker group. For this example, our user's is named user:
+
+ sudo usermod -a -G docker user
+password for user:
+
+Confirm the change using the grep command:
+
+ grep docker /etc/group 
+docker:x:999:user
+Once finished, log out and then log back in for changes to take effect.
+
+
+
+
+========================
+
+Commands:
+
+sudo apt-get update
+
+#prerequities packages to install docker 
+
+sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+
+#download docker as per the version
+
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+sudo yum install docker-ce
+sudo !!
+
+#Now enable docker service
+
+sudo systemctl enable docker
+sudo systemctl start docker
+
+#run docker image hello world
+
+sudo docker version
+
+sudo docker run hello-world
+
+#above command is for super user to access docker 
+if a cloud user want to access we need to add user to cloud group
+
+sudo usermod -a -G docker cloud_user
+log out and log in 
+
+
+install through script:
+
+wget -qO- https://get.docker.com |sh
+
+==================================================
+===================================================
+
+
+======================================================
+======================================================
+
+sudo apt-get update
+
+sudo apt-get -y install \
+  apt-transport-https \
+  ca-certificates \
+  curl \
+  gnupg-agent \
+  software-properties-common
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+sudo apt-key fingerprint 0EBFCD88
+
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+
+sudo apt-get update
+
+sudo apt-get install -y docker-ce=5:18.09.5~3-0~ubuntu-bionic docker-ce-cli=5:18.09.5~3-0~ubuntu-bionic containerd.io
+sudo usermod -a -G docker cloud_user
+
+
+==========================================================
+
+
+
+Storage drivers:
+
+overlay2 - by default in Centos and ubuntu storage 
+devicemapper - it uses for all other OS and older docker version
+
+#How to mapped explicitly add flag as devicemapper
+ 
+Sudo vi /usr/lib/systemd/system/docker.service
+and add this below line to
+
+[service]
+type=notify
+ExecStart=/usr/bin/dockerd --storage-driver devicemapper
+
+sudo systemctl daemon-reload
+sudo systemctl start docker
+
+Using the Daemon Config File to Set the Storage Driver
+Note: This is the recommended method for setting the storage driver.
+1. Create or edit /etc/docker/daemon.json:
+sudo vi /etc/docker/daemon.json
+2. Add the value "storage-driver": "<driver name>":
+This example sets the storage driver to devicemapper.
+{
+"Storage-driver": "devicemapper"
+}
+
+=======================================================
+
+Running Container:
+
+docker run hello-world
+
+Syntax:
+
+docker run [option] image:[tag] [command] [arg..]
+
+docker run nginx:1.15.11 {with image and tag}
+docker run busybox echo hello world! {with command and args}
+-d {detached mode}
+--name {use your own name}
+--restart {specify when the container shoud be automatically restart}
+   No: default never restart
+   on-failure:
+   always:
+   unless-stopped:
+-p {publish port <host_port>:<conatiner_port>}
+-rm {remove}
+--memory {limit your memory limit-Hard limit}
+  reservation {is a soft limit}
+  
+Manage Container:
+
+docker ps { list the currently running containers}
+docker ps -a {list all containers}
+docker container stop nginx
+docker conatiner start nginx
+docker conatiner rm nginx  
+
+==========================================================
+
+Upgrading the Docker Engine:
+
+downgrade the docker engine:
+sudo systemctl stop docker {stop docker }
+
+sudo apt-get remove -y docker-ce docker-ce-cli {remove package, need not to worry about container}
+
+sudo apt-get update
+
+sudo apt-get install -y docker-ce=5:18.09.4~3-0~ubuntu-bionic docker-ce-cli=5:18.09.4~3-0~ubuntu-bionic
+docker version 
+
+===============================================================
+
+Configuring Logging Drivers (Splunk, Journald, etc.)
+
+Logging driver: A pluggable driver that handles log data from services and containers in Docker.
+Determine the current default logging driver:
+docker info | grep Logging
+
+
+To set a new default driver, modify /etc/docker/daemon.json. The log-driver option sets the driver, and
+log-opts can be used to provide driver-specific configuration.
+For example:
+{
+"log-driver": "json-file",
+"log-opts": {
+"max-size": "10m",
+"max-file": "3",
+"labels": "production_status",
+"env": "os,customer"
+}
+}
+Remember to utilize sudo systemctl restart docker after making any changes to /etc/docker/daemon.json.
+We can also override the default driver setting for individual containers using the --log-driver' and
+'--log-opt flags with docker run.
+docker run --log-driver json-file --log-opt max-size=10m nginx
+
+=========================================================================
+
+
+Introduction to Docker Swarm
+
+Documentation:
+Swarm Mode Concepts Link
+Docker Swarm: A cluster management solution that comes packaged with Docker. It allows us to create
+and manage a cluster of Docker servers.
+Manager: A server in a Swarm that controls the swarm cluster and delegates work to workers.
+Worker: A server in the Swarm that executes container workloads.
+
+
+1. First, install Docker CE on the machine (refer to the prior sections on installing Docker CE).
+2. Initialize the swarm:
+Note: Set --advertise-addr to an address that other nodes in the swarm will see this node as.
+
+docker swarm init --advertise-addr <advertise address>
+
+We can find information about the current state of the swarm using docker info.
+
+3. List nodes in the swarm:
+
+Note: At this point there will only be one because the manager that was just initialized.
+
+docker node ls
+
+======================================================================
+
+Configuring Swarm Nodes
+
+Documentation:
+
+Adding Swarm Nodes Link
+1. First, install Docker CE on the machine (refer to the prior sections on installing Docker CE).
+
+2. Retrieve a join-token from the manager.
+
+3. Run this command on the Swarm manager:
+
+docker swarm join-token worker
+
+4. Now copy the docker swarm join command provided in the output and run it on all workers.
+
+The command’s execution looks like this:
+
+docker swarm join --token <token> <swarm manager private IP>:2377
+
+5. On the Swarm Manager, verify that all of the worker nodes have successfully joined.
+
+docker node ls
+
+All nodes should appear in the list, including the manager.
+
+===========================================================================
+
+Docker Swarm Backup and Restore
+
+Documentation:
+
+Administration and Back up the Swarm Link
+
+Backup Swarm Data
+
+On the manager:
+
+1. Stop Docker:
+sudo systemctl stop docker
+
+2. Archive the swarm data located in /var/lib/docker/swarm, and then start Docker again.
+
+sudo tar -zvcf backup.tar.gz /var/lib/docker/swarm
+sudo systemctl start docker
+
+Restore from Backup
+
+Perform the following steps on the manager:
+
+1. Stop Docker:
+sudo systemctl stop docker
+
+2. Delete any data currently in the swarm data directory:
+sudo rm -rf /var/lib/docker/swarm/*
+
+3. Expand the archived backup data into the swarm data directory and start Docker:
+sudo tar -zxvf backup.tar.gz -C /var/lib/docker/swarm/
+sudo systemctl start docker
+
+4. Verify that all of the nodes are functioning properly in the swarm after the restore:
+docker node ls
+
+=====================================================================
+
+Namespaces and Cgroups
+
+Documentation:
+
+Docker Overview Link
+
+Namescape Remapping Link
+
+Namespaces: A Linux related technology that isolates processes by partitioning the resources that are
+available to them. Namespaces prevent processes from interfering with one another. Docker leverages
+namespaces to isolate resources for containers.
+
+Some namespaces used by Docker:
+• pid: Process isolation.
+• net: Network interfaces.
+• ipc: Inter-process communication.
+• mnt: Filesystem mounts.
+• uts: Kernel and version identifiers.(Unix Timesharing System)
+• user namespaces: Requires special configuration. Allows container processes to run as root inside
+
+the container while mapping that user to an unprivileged user on the host.
+Control Groups (cgroups): Control groups limit processes to a specific set of resources. Docker uses
+cgroups to enforce rules around resource usage by containers, such as limiting memory or CPU usage.
+
+
+
+
+=============================================================
+
+---
+- hosts: all
+
+  become: yes
+  become_method: sudo
+  remote_user: ubuntu
+
+  tasks:
+  - name: Update and upgrade apt packages
+    apt:
+      upgrade: yes
+      update_cache: yes
+      cache_valid_time: 86400 #One day
+
+  - name: install JDK 11
+    apt:
+      name: openjdk-11-jdk
+      state: present
+
+  - name: add tomcat group
+    group:
+      name: tomcat
+
+  - name: add tomcat user
+    user:
+      name: tomcat
+      group: tomcat
+      home: /user/share/tomcat
+      createhome: no
+
+  - name: create /opt/tomcat directory
+    file:
+      path: /opt/tomcat
+      state: directory
+      mode: 0755
+
+  - name: download & unarchive
+    unarchive:
+      src: http://apache.cs.utah.edu/tomcat/tomcat-9/v9.0.16/bin/apache-tomcat-9.0.16.tar.gz
+      dest: /opt/tomcat
+      remote_src: yes
+      extra_opts: [--strip-components=1]
+
+  - name: Change ownership
+    file:
+      path: /opt/tomcat
+      owner: tomcat
+      group: tomcat
+      mode: "u+rwx,g+rx,o=rx"
+      recurse: yes
+      state: directory
+
+  - name: Copy Tomcat service from local to remote
+    copy:
+       src: tomcat.service
+       dest: /etc/systemd/system/
+       mode: 0755
+
+  - name: Start and enable Tomcat service
+    systemd:
+      name: tomcat
+      state: started
+      enabled: true
+      daemon_reload: true
+
+=============================================================================================
+
+
+Autolock and unlock Docker Swarm:
+
+Autolock: A feature of Docker Swarm. Prevents sensitive keys from being stored insecurely on swarm
+managers, but requires us to enter an unlock key whenever the Docker daemon restarts on a swarm
+manager.
+
+1. The command that enables the autolock feature:
+docker swarm update --autolock=true
+
+2. The command that disables the autolock feature:
+docker swarm update --autolock=false
+
+3. The command that unlocks a locked Swarm manager:
+docker swarm unlock
+
+4. To obtain the unlock key from an unlocked Swarm manager:
+docker swarm unlock-key
+
+5. To rotate the unlock key, which will automatically orchestrate key rotation across all nodes in the
+cluster:
+docker swarm unlock-key --rotate
+
+======================================================================================
+
+Creating Services:
+
+Create a simple service running the nginx image.
+
+ docker service create nginx
+Create an nginx service with a specified name, multiple replicas, and a published port.
+
+ docker service create --name nginx --replicas 3 -p 8080:80 nginx
+Use a template to pass the node hostname to each container as an environment variable.
+
+ docker service create --name node-hostname --replicas 3 --env NODE_HOSTNAME="{{.Node.Hostname}}" nginx
+Get the container running on the current machine, and print its environment variables to verify that the NODE_HOSTNAME variable is set properly.
+
+ docker ps
+ docker exec <CONTAINER_ID> printenv
+List the services in the cluster.
+
+ docker service ls
+List the tasks for a service.
+
+ docker service ps nginx
+Inspect a service.
+
+ docker service inspect nginx
+ docker service inspect --pretty nginx
+Change a service.
+
+ docker service update --replicas 2 nginx
+Delete a service.
+
+ docker service rm nginx
+Create a global service.
+
+docker service create --name nginx --mode global nginx
+Two different ways to scale a service:
+
+docker service update --replicas 3 nginx
+docker service scale nginx=4
+
+=============================================================================
+
+Docker Inspect: get details about cluster 
+
+Run a container and inspect it.
+
+ docker run -d --name nginx nginx
+ docker inspect <CONTAINER_ID>
+List the containers and images to get their IDs, then inspect an image.
+
+ docker container ls
+ docker image ls
+ docker inspect <IMAGE_ID>
+Create and inspect a service.
+
+ docker service create --name nginx-svc nginx
+ docker service ls
+ docker inspect <SERVICE_ID>
+ docker inspect nginx-svc
+Use the type-specific commands to inspect objects.
+
+ docker container inspect nginx
+ docker service inspect nginx-svc
+Use the --format flag to retrieve a subset of the data in a specific format.
+
+ docker service inspect --format='{{.ID}}' nginx-svc
+
+=======================================================================================
+
+Install Docker Compose.
+
+sudo curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+sudo chmod +x /usr/local/bin/docker-compose
+
+docker-compose version
+Set up a Docker Compose project.
+
+ mkdir nginx-compose
+ cd nginx-compose
+ vi docker-compose.yml
+Create your docker-compose.yml.
+
+ version: '3'
+ services:
+   web:
+     image: nginx
+     ports:
+     - "8080:80"
+   redis:
+     image: redis:alpine
+
+Start your Compose app.
+
+docker-compose up -d
+
+List the Docker Compose containers, then stop the app.
+
+docker-compose ps
+docker-compose down
+
+===============================================================================
+
+
+Create a compose file for the stack.
+
+ vi simple-stack.yml
+ version: '3'
+ services:
+   web:
+     image: nginx
+   busybox:
+     image: radial/busyboxplus:curl
+     command: /bin/sh -c "while true; do echo Hello!; sleep 10; done"
+
+Deploy the stack and examine it using various commands.
+
+ docker stack deploy -c simple-stack.yml simple
+ docker stack ls
+ docker stack ps simple
+ docker stack services simple
+ docker service logs simple_busybox
+
+Modify the stack to use an environment variable.
+
+ vi simple-stack.yml
+ version: '3'
+ services:
+   web:
+     image: nginx
+   busybox:
+     image: radial/busyboxplus:curl
+     command: /bin/sh -c "while true; do echo $MESSAGE; sleep 10; done"
+     environment:
+     - MESSAGE=Hello!
+
+docker stack deploy -c simple-stack.yml simple
+
+docker service logs simple_busybox
+
+Modify the stack to expose a port.
+
+ vi simple-stack.yml
+ version: '3'
+ services:
+   web:
+     image: nginx
+     ports:
+     - "8080:80"
+   busybox:
+     image: radial/busyboxplus:curl
+     command: /bin/sh -c "while true; do echo $MESSAGE; sleep 10; done"
+     environment:
+     - MESSAGE=Hello!
+docker stack deploy -c simple-stack.yml simple
+
+curl localhost:8080
+Modify the stack to use the BusyBox service to communicate with the web service.
+
+
+ vi simple-stack.yml
+ version: '3'
+ services:
+   web:
+     image: nginx
+     ports:
+     - "8080:80"
+   busybox:
+     image: radial/busyboxplus:curl
+     command: /bin/sh -c "while true; do echo $MESSAGE; curl web:80; sleep 10; done"
+     environment:
+     - MESSAGE=Hello!
+
+ docker stack deploy -c simple-stack.yml simple
+
+scale/Replicas:
+
+
+vi simple-stack.yml
+ version: '3'
+ services:
+   web:
+     image: nginx
+     ports:
+     - "8080:80"
+     deploy:
+       replicas: 3
+   busybox:
+     image: radial/busyboxplus:curl
+     command: /bin/sh -c "while true; do echo $MESSAGE; curl web:80; sleep 10; done"
+     environment:
+     - MESSAGE=Hello!
+
+docker stack deploy -c simple-stack.yml simple
+
+Delete the stack.
+
+docker stack rm simple
+
+=============================================================================================
+
+
+List your current nodes.
+
+ docker node ls
+
+Add a label to a node.
+
+ docker node update --label-add availability_zone=east <NODE_NAME>
+ docker node update --label-add availability_zone=west <NODE_NAME>
+
+View existing labels with:
+
+ docker node inspect --pretty <NODE_NAME>
+
+You can use --constraint when creating a service to restrict which nodes will be used to execute a service's tasks.
+
+docker service create --name nginx-east --constraint node.labels.availability_zone==east --replicas 3 nginx
+
+docker service ps nginx-east
+
+docker service create --name nginx-west --constraint node.labels.availability_zone!=east --replicas 3 nginx
+
+docker service ps nginx-west
+
+Use --placement-pref to spread tasks evenly based on the value of a specific label.
+
+docker service create --name nginx-spread --placement-pref spread=node.labels.availability_zone --replicas 3 nginx
+
+docker service ps nginx-spread
+
+=============================================================================================
+
+
+CI/CD using Kubernetes:
+
+improves the quality and speed of feedback
+reduce the time/resource to move to production.
+create a repeatable process(build,deploy,and test)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+node{
+
+    stage('SCM checkout'){
+    git  credentialid: 'git-creds', url: https:-----------------
+     }
+
+    stage('Mvn Package'){
+      def mvnhome = tool name: 'maven', type: 'maven'
+      def mvnCMD = "${mvnHome}/bin/mvn"
+      sh "${mvnCMD} clean package"
+     }
+    stage('Build docker image'){
+     sh 'docker build -t username/image:tag .'
+     }
+
+    stage('push docker image'){
+      sh 'docker login -u username -p'
+      sh 'docker push username/image:tag'
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
