@@ -1,0 +1,396 @@
+CI/CD using Kubernetes:
+
+-improves the quality and speed of feedback
+-reduce the time/resource to move to production.
+-create a repeatable process(build,deploy,and test)
+-develop and automated deployment process
+-remove the duplication of work
+
+Make Deployments Smoother:
+
+-automate as much as possible.
+-build and pack your application only once
+-deploy the same way all the time.
+-deploy in small batches, and do it often
+-choose a zero-downtime strategy(B/G,Canary, etc)
+-trunk-based development
+-work with environment variables.
+
+Workflow:
+
+docker build 
+docker push and kubectl
+
+
+Disadvantages of microservices in a larger env :
+
+-No Encryption between micro services
+-no retries, no failover
+-no intelligent loadbalancing
+-no routing decisions
+-no metrics/log/traces
+-no access controls
+
+to over come :
+
+Sidecars:
+-we implement called Sidecars it enables encryptions betwn microservices
+-retires when connection fails
+-intelligent loadbalancing
+
+
+Management Interface:
+-routing decisions
+-metrics and traces, logs
+-access control
+
+
+to install ISTIO, we need to create a cluster as follows:
+
+Step 1: 
+kops create cluster --name=kubernetes.newtech.academy --state=s3://kops-state-b429b 
+--zones=eu-west-1a --node-count=2 --node-size=t2.medium --master-size=t2.micro 
+--dns-zone=kubernetes.newtech.academy
+
+# istio needs 2gb memory to runs its applications thats why we are using t2.medium=4gb
+
+run the above command to create this cluster:
+
+then vim READ.md
+
+## istio
+
+## Kops configuration
+
+Kops edit cluster kubernetes.newtech.academy
+
+Add:
+```
+KubeAPIServer:
+  admissionControl:
+  -namespaceLifecycle
+  -LimitRanger
+  -ServiceAccount
+  -PersistentVolumeLabel
+  -DefaultStorageClass
+  -DefaultTolerationSeconds
+  -MutatingAdmissionWebhook
+  -ValidatingAdmissionWebhook
+  -ResourceQuota
+  -NodeRestriction
+  -Priority
+```
+
+Add betwn 
+Spec and API in editor
+
+
+## download (1.0.1)
+
+cd ~
+wget https://github.com/istio/istio/releases/download/1.0.1/istio-1.0.1-linux.tar.gz
+tar -xzvf istio-1.0.1-linux.tar.gz
+cd istio-1.0.1
+echo 'export PATH="$PATH:/home/ubuntu/istio-1.0.1/bin"' >> ~/.profile
+
+
+Step 2:
+
+Kops edit cluster kubernetes.newtech.academy --state=s3://kops-state-b429b
+
+open in Editer copy below features below Spec:
+
+KubeAPIServer:
+  admissionControl:
+  -namespaceLifecycle
+  -LimitRanger
+  -ServiceAccount
+  -PersistentVolumeLabel
+  -DefaultStorageClass
+  -DefaultTolerationSeconds
+  -MutatingAdmissionWebhook
+  -ValidatingAdmissionWebhook
+  -ResourceQuota
+  -NodeRestriction
+  -Priority
+
+Step 3: (spinnig up the Cluster)
+
+kops update cluster kubernetes.newtech.academy --yes --state=s3://kops-state-b429b
+
+
+Step 4: vim READ.md
+
+##download 
+
+cd ~
+wget https://github.com/istio/istio/releases/download/1.0.1/istio-1.0.1-linux.tar.gz
+tar -xzvf istio-1.0.1-linux.tar.gz
+cd istio-1.0.1
+echo 'export PATH="$PATH:/home/ubuntu/istio-1.0.1/bin"' >> ~/.profile
+
+
+then run this path or log Off and Log On:
+
+export PATH="$PATH:/home/ubuntu/istio-1.0.1/bin
+
+istioctl
+
+cd /vagrant/kubernetes-course/istio/
+vim READ.md
+
+##Install ISTIO Apply CRDs:
+
+kubectl apply -f install/kubernetes/helm/istio/templates/crds.yaml
+
+ option 1: with no mutual TLS authentication
+
+kubectl apply -f install/kubernetes/istio.yaml
+
+ option 2: or with mutual TLS authentication
+
+kubectl apply -f install/kubernetes/istio-auth.yaml (to communicate with cert's)
+
+then 
+
+kubectl get pod -n istio-system
+
+===========================================
+
+Istio Enable App:
+
+to configure this set up we need to understand yaml files.
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata: 
+  name: hello
+spec: 
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: hello
+        version: v1
+    spec:
+      containers:
+      - name: hello
+        image: wardviaene/http-echo
+        env: 
+        - name: TEXT
+          value: hello
+        - name: NEXT
+          value: "world:8080"
+        ports: 
+        - name: http
+          containerPort: 8080
+
+---
+apiVersion: v1
+kind: service
+metadata:
+  name: hello
+  labels:
+    app: hello
+spec:
+  selector:
+    app: hello
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+
+---
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: world
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+         app:
+         version: v1
+   spec:
+     containers:
+     - name: world
+       image: wardviaene/http-echo
+       env:
+       - name: TEXT
+         value: world
+       - name: TEXT
+         value: "world-2:8080"
+       ports:
+       - name: http
+         containerPort: 8080
+
+---
+apiVersion: v1
+kind: service
+metadata:
+  name: world
+  labels:
+    app: world
+spec:
+  selector:
+    app: world
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+
+---
+apiVersion: v1
+kind: Deployment
+metadata: 
+  name: world-2
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: world-2
+        version: v1
+     spec:
+       containers:
+       - name: world-2
+         image: wardviaene/http-echo
+         env:
+         - name: TEXT
+           value: "!!!"
+         ports:
+         - name: http
+           containerPort: 8080
+
+---
+
+apiVersion: v1
+kind: service
+metadata:
+  name: world-2
+  labels:
+    app: world-v2
+spec:
+  selector:
+    app: world-2
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+
+
+to inject proxy to container(sidecar/EnvoyProxy)
+
+istioctl kube-inject -f helloworld.yaml (without kubectl - it will inject envoy proxy automatically)
+
+make sure you have set the path correctly
+
+export PATH="$PATH:/home/ubuntu/istio-1.0.1/bin"
+
+kubectl apply -f <(istioctl kube-inject -f helloworld.yaml)
+
+above command it give output as :
+3 Pods for each services like Hello 3, world 3 and world-2 3 because of replicas 3
+and in every pod has 2 container each one is real app(hello) and another one is Envoy proxy(sidecar)
+
+
+then update gateway file:
+
+helloworld-gw.yaml
+
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata: 
+  name: helloworld-gateway
+spec:
+  selector:
+    istio: ingressgateway #use istio default controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+     hosts:
+     - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: helloworld
+spec:
+  hosts: 
+  - "*"
+  gateways:
+  - helloworld-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /hello
+     route:
+     - destination:
+         host: hello.default.svc.cluster.local
+         port:
+           number: 8080
+
+kubectl apply -f helloworld-gw.yaml
+
+kubectl get svc -n istio-system -o wide
+
+curl <full url> or curl <full url/hello> because in gateway file we have define to search only for prefix hello
+
+
+====================================================
+
+Kubernetes Ingress:
+
+Node POds range: 30000 - 32767
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Points to cover:
+
+Ingress
+Pilot
+Mixer
+Citadel
+Envoy Proxy
+Control Plane API
+
+==================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
