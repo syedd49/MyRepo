@@ -1,0 +1,470 @@
+Microservices on kubernetes:
+
+1.
+
+Install Docker on all of the cluster nodes.
+keyboard_arrow_up
+Add the GPG key:
+# curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+Add Docker repository:
+# sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+Update packages:
+# sudo apt-get update
+
+Install Docker:
+# sudo apt-get install -y docker-ce=18.06.1~ce~3-0~ubuntu
+
+=========================================================================
+
+2.
+
+Installation Instructions:
+
+Add the GPG key:
+# curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+
+Add the Kubernetes repository:
+# cat << EOF | sudo tee /etc/apt/sources.list.d/kubernetes.list
+deb https://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+
+Resynchronize the package index:
+# sudo apt-get update
+
+Install the required packages:
+# sudo apt-get install -y kubelet=1.12.7-00 kubeadm=1.12.7-00 kubectl=1.12.7-00
+
+Prevent packages from being automatically updated:
+# sudo apt-mark hold kubelet kubeadm kubectl
+
+=========================================================================
+3.
+
+Installation Steps:
+
+Initialize the Cluster on the Master:
+# sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+
+Set up kubeconfig for a Local User on the Master
+# mkdir -p $HOME/.kube
+
+# sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+
+# sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Join Nodes to the Cluster
+# sudo kubeadm join $controller_private_ip/100.26.100.92:6443 --token $token --discovery-token-ca-cert-hash $hash
+sudo kubeadm join 172.31.31.53:6443 --token $token --discovery-token-ca-cert-hash $hash
+==============================================================================
+4.
+
+Install the Flannel Network Addon
+
+(on all nodes) Add net.bridge.bridge-nf-call-iptables=1 to sysctl.conf.
+# echo "net.bridge.bridge-nf-call-iptables=1" | sudo tee -a /etc/sysctl.conf
+
+(on all nodes) Apply the change made to sysctl.conf
+# sudo sysctl -p
+
+(on Master) Use kubectl to install Flannel using YAML template.
+# kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/bc79dd1505b0c8681ece4de4c0d86c5cd2643275/Documentation/kube-flannel.yml
+
+=======================================================================================================
+
+Single Application to the cluster:
+
+Namespace : 3 type
+default Namespace 
+Public Namespace 
+kubesystem Namespace 
+
+#creating namespaces
+
+kubectl create namespace dev
+
+kubectl get namespace
+kubectl describe namespace dev
+kubectl delete namespace dev
+
+#Creating Pod:
+
+use kubectl command:
+
+kubectl run test --image=nginx
+
+use kubectl deployment command:
+kubectl create deployment test2 --image=nginx
+
+use kubectl deployment command with STDIN:
+
+cat << EOF | kubectl create -f -
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec: 
+  containers:
+  -name: nginx
+  image: nginx
+EOF
+
+kubectl get pods
+kubectl describe pod nginx
+
+kubectl get deployments
+
+kubectl delete deployment test2
+
+========================================================================
+
+Microservice Application to the cluster:
+
+#install git
+
+sudo apt-get install git
+
+#clone repo
+
+git clone https://github.com/linuxacademy/microservices-demo
+cd microservices-demo 
+ll
+cd deploy
+ll
+cd kubernetes
+
+cd ~
+
+1. create namespace on the application
+
+kubectl create namespace sock-shop
+
+2.installing the microservice application inside the sock-shop namespace
+
+kubectl -n sock-shop create -f microservices-demo/deploy/kubernetes/complete-demo.yaml
+
+kubectl get pods -n sock-shop
+kubectl get pods -n sock-shop -w {-w is for watch}
+
+kubectl get pods -n sock-shop
+
+3.access microservice application:
+
+kubectl get service -n sock-shop
+
+kubectl describe services -n sock-shop front-end
+
+=========================================================================
+
+kubectl get pods --all-namespaces
+
+#Call to API server
+
+kubectl proxy --port=8080 &
+
+#Call Http using CURL:
+
+curl http://localhost:8080/api/
+
+#call without using proxy:{ output will in a form of a token, use this token in code}
+
+kubectl describe secret
+
+=====================================================================
+
+Service Discovery:
+
+kubectl get pods -n sock-shop
+
+kubectl exec <any random pods> -n sock-shop --env
+
+CoreDNS for service discovery:
+
+kubectl get configmap --all-namespace { for update your own config map}
+
+kubectl describe configmap coredns -n kube-system
+
+kubectl get deployments --all-namespaces
+kubectl describe deployments -n kube-system coredns
+
+=================================================================
+
+querying the Cluster DNS:
+
+kubectl run curl --image=radial/busyboxplus:curl -i --tty
+
+  inside the pod:
+   curl front-end.sock-shop
+
+nslookup front-end.sock-shop
+
+
+Ctrl+P then ctrl+Q {without shutting down pods}
+
+=========================================================================
+Replication controller, replica sets and deployment;
+
+use deployment through replica sets for effiency
+pwd
+vim deployment.yml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+- name: nginx-deployment
+  labels: 
+    app: nginx
+spec:
+  replicas: 3
+  selector: 
+    matchLabels:
+      app: nginx
+  template:
+    metadata: 
+      labels:
+        apps: nginx
+    spec: 
+      containers:
+      - name: nginx
+        image: nginx:1.15.4
+        ports:
+        - containerPort: 80
+
+
+run:
+
+kubectl create -f deployment.yml
+
+kubectl get deployments --all-namespaces
+
+kubectl get pods
+
+============================
+
+Ingress:
+
+Ingress is an API object that manages external access to services in the cluster typically through HTTP.
+Ingress is currently a beta resource and requires an ingress controller to function. The supported controllers as of this point are GCE and nginx
+
+Services:
+ kubectl get services --all-namespaces
+kubectl describe services front-end -n sock-shop
+Deployments:
+kubectl get deployments --all-namespaces
+kubectl describe deployments front-end -n sock-shop
+Pods:
+kubectl get pods --all-namespaces
+kubectl describe pods <pod_name> -n sock-shop
+
+go to cd microservices-demo/deploy/kubernetes/
+vim complete-demo.yml
+ change nodePort to 30075
+save
+kubectl apply -f complete-demo.yml
+
+cd ~
+
+accessing the microservices front end:
+
+simple elinks browser
+
+install 
+sudo apt-get install elinks
+http://localhost:<port>
+
+Web browser using SSH:
+
+ssh -L <port>:localhost:<port> cloud_user@ip_public
+
+http://localhost:<port>
+
+========================================================================
+
+Scaling Microservices:
+
+Manual scaling:
+
+kubectl get deployment -n sock-shop
+
+go to :
+
+vim /microservices-demo/deploy/kubernetes/complete-demo.yml
+search for deployment
+ 
+set replica to 3
+save
+apply: kubectl apply -f complete-demo.yml
+
+kubectl get deployment -n sock-shop
+
+directly from Command Line:
+
+kubectl scale deployment/<deployment-name> -n sock-shop --replicas=3
+
+back down to 1
+
+kubectl scale deployment/<deployment-name> -n sock-shop --replicas=3
+
+Autoscaling:
+
+Horizontal Pod Autoscaling{HPA}
+
+kubectl autoscale deployment <front-end> -n sock-shop --min 2 --max 6 --cpu-percent 65
+
+kubectl get hpa -n sock-shop 
+
+# to delete hpa
+
+kubectl delete hpa -n sock-shop front-end
+
+==============================================================
+
+Self Healing:
+
+kubectl get deployments -n sock-shop
+kubectl get pods -n sock-shop
+
+delete:
+kubectl delete pod <pod_name> -n sock-shop
+ 
+kubectl get pods -n sock-shop
+
+Installing Application without replication:
+
+Create sample pod:
+
+Vim application.yml
+
+apiVersion: v1
+kind: pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+
+kubectl create -f application.yml
+
+kubectl get pods
+
+kubectl delete pod nginx
+
+kubectl get pods
+
+========
+node Failure:
+
+kubectl get nodes
+kubectl get deployments -n sock-shop
+kubectl get pods -n sock-shop
+kubectl get describe pod -n sock-shop <pod-name>
+runnig port check
+kubectl get describe pod -n sock-shop <pod-name1>
+
+kubectl get describe pod -n sock-shop <pod-name2>
+
+kubectl get pods -n sock-shop
+
+Sudo poweroff
+
+check on mnaster status of nodes:
+
+kubectl get nodes
+
+
+================================================
+
+to deploy manually Dashboard UI for Kubernetes:
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta1/aio/deploy/recommended.yaml
+
+Kubernetes Dashboard is a general purpose, web-based UI for Kubernetes clusters. It allows users to manage applications running in the cluster and troubleshoot them, as well as manage the cluster itself.
+
+Dashboard UI workloads page
+
+Getting Started
+IMPORTANT: Read the Access Control guide before performing any further steps. The default Dashboard deployment contains a minimal set of RBAC privileges needed to run.
+
+To deploy Dashboard, execute following command:
+
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml
+To access Dashboard from your local workstation you must create a secure channel to your Kubernetes cluster. Run the following command:
+
+$ kubectl proxy
+Now access Dashboard at:
+
+http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/.
+
+Create An Authentication Token (RBAC)
+To find out how to create sample user and log in follow Creating sample user guide.
+
+NOTE:
+
+Kubeconfig Authentication method does not support external identity providers or certificate-based authentication.
+Dashboard can only be accessed over HTTPS
+Heapster has to be running in the cluster for the metrics and graphs to be available. Read more about it in Integrations guide.
+Documentation
+Dashboard documentation can be found on docs directory which contains:
+
+Common: Entry-level overview
+User Guide: Installation, Accessing Dashboard and more for users
+Developer Guide: Getting Started, Dependency Management and more for anyone interested in contributing
+Community, discussion, contribution, and support
+Learn how to engage with the Kubernetes community on the community page.
+
+You can reach the maintainers of this project at:
+
+#sig-ui on Kubernetes Slack
+kubernetes-sig-ui mailing list
+Issue tracker
+SIG info
+Roles
+Contribution
+Learn how to start contribution on the Contributing Guidline
+
+Code of conduct
+Participation in the Kubernetes community is governed by the Kubernetes Code of Conduct.
+
+
+
+
+
+Heapster
+influxdb
+cluster role binding for the dashboard
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
