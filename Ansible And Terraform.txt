@@ -1,0 +1,104 @@
+Ansible And Terraform:
+
+Read variable from CLI:
+ vars_prompt:
+
+print variable on CLI:
+ debug_msg:
+
+
+---
+ - hosts: localhost
+   vars_prompt:
+    vars: var1
+    prompt: "enter value"
+
+   - tasks:
+     debug: 
+      msg: "{{ var1 }}"
+
+Looping in ansible playbooks:
+
+without iteration:
+
+---
+ - hosts: local_host
+   tasks:
+   - name: "this is without iteration
+     command: mkdir /tmp/my_dir1
+   - name: "this is my dir 2"
+     command: mkdir /tmp/my_dir2
+   - name: this is my dir 3"
+     command: mkdir /tmp/my_dir3
+
+with iteration:
+
+--- 
+ - hosts: localhost
+   tasks:
+   - name: this will create dirs 
+     command: mkdir /tmp/"{{ item }}"
+     with_items:
+     - new1
+     - new2
+     - new3
+
+========================================
+
+how to work with command line variables in playbook:
+
+ansible-playbook your_playbook_script -e "var=1,var2=2"
+
+touch command_line.yml
+
+ansible-playbook command_line,yml -e "x=hi y=world"
+
+---
+ - name: command line
+   hosts: localhost
+   tasks:
+    - debug:
+        msg: "value from command line is x= {{x}} and y= {{y}}"
+
+=========================================
+
+Control statements:
+
+---
+ - name: this is for when condition/statement
+   hosts: localhost
+   tasks:
+   - name: when condition to write into file
+     copy: 
+       dest: /tmp/when_file.txt
+       content: "this is created based on when exp"
+     when: false
+     
+
+=============================================
+
+register and delegate_to module:
+
+Register is to use to store a response to a variable
+
+---
+ - name: register module
+   hosts: localhost
+   tasks:
+   - command: touch /tmp/yy.txt
+     register: end_of
+   - debug:
+       msg: "this is {{ end_of }}"
+     delegate_to: localhost 
+
+
+msiexec.exe /i AWSDiscoveryAgentInstaller.msi REGION="us-west-2" KEY_ID="AKIATQXYSOQUID2GOUE4" KEY_SECRET="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" /q
+
+Needed:
+
+Amazon SSM Agent
+AWS Discovery Agent
+AWS PV Drivers
+AWS Tools for Windows
+aws-cfn-bootstrap
+
