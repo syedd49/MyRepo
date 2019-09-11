@@ -1,0 +1,185 @@
+ashisn
+me#@!777
+
+yum install httpd -y
+service httpd start 
+chkconfig httpd on
+yum install wget -y 
+yum install php php-mysql -y
+
+JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.212.b04-1.el8_0.x86_64
+PATH=$PATH:$JAVA_HOME:$HOME/.local/bin:$HOME/bin
+
+export PATH
+
+
+sudo yum -y install wget
+sudo wget -o /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+sudo yum -y install jenkins
+
+or 
+
+sudo yum -y install wget
+sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
+sudo rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
+sudo yum install jenkins
+
+systemctl start jenkins
+systemctl enable jenkins
+
+
+ or 
+
+service jenkins start
+service jenkins enable
+
+
+install Tomcal on ec2
+
+Create EC2 linux
+
+1: install Java
+2: sudo yum install java-1.8* -y
+3:download tomcat
+  pick tar file
+  keep in OPT
+  sudo wget link
+  sudo tar -xf file
+  sudo mv filename tomcat8
+  ls -l
+4: change permission
+   sudo chown -R ec2-user:ec2-user tomcat8
+   ls -l
+
+5:  go to tomcat home
+    cd /bin
+    ./startup 
+6: by defualt it will run in 8080
+   publicip:8080 in browser
+7:
+  github.com/javahometech/myweb
+
+
+pipeline{
+    agent any
+    
+    environment{
+        PATH = "/opt/maven3/bin:$PATH"
+    }
+    stages{
+        stage("Git Checkout"){
+            steps{
+                git credentialsId: 'github', url: 'https://github.com/javahometech/myweb'
+            }
+        }
+        stage("Maven Build"){
+            steps{
+                sh "mvn clean package"
+                sh "mv target/*.war target/myweb.war"
+            }
+        }
+        stage("deploy-dev"){
+            steps{
+                sshagent(['tomcat-new']) {
+                sh """
+                    scp -o StrictHostKeyChecking=no target/myweb.war  ec2-user@172.31.5.176:/opt/tomcat8/webapps/
+                    
+                    ssh ec2-user@172.31.5.176 /opt/tomcat8/bin/shutdown.sh
+                    
+                    ssh ec2-user@172.31.5.176 /opt/tomcat8/bin/startup.sh
+                
+                """
+            }
+            
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+100058257	
+
+
+import boto3
+import sys
+import os
+import time
+
+def get_ec2_con_for_give-region(my_region):
+   ec2_con_re=boto3.resource('ec2',region_name=my_region)
+return ec2_con_re
+
+def list_instances_on_my region(ec2_con_re):
+   for each in ec2_con_re.intstances.all():
+   print each.id
+
+def get_instance_state(ec2-con_re, in_id):
+   for each in ec2_con_re.instance.filter(Filters=[{'name':'instance_id'."value":[in_id]}):pr_st=each.state['name']
+ return pr_st
+
+else:
+  for each in ec2_con_re.instances.filter(Filters=[{'name':'instance_id',"value":[in_id]}]):
+  each.start()
+   print"please wait it is going to be start,once if it is started then ew will get you know"
+   each.wait_until_running()
+   print"it is running now"
+return
+
+
+def thank_you():
+
+    print"\n\n--- thank you for using---"
+ return none
+
+def stop_instance(ec2_con_re, in_id):
+   pr_st=get_instant_state(ec2_con_re, in_id)
+  if pr_st=="stopped":
+    print"instance is already stopped"
+else:
+  for each in ec2_con_re.instance.filter(Filters=[{'name':'instance_id',"value":[in_id]}]):
+  each.stop()
+  print"please wait it is giving to stop, once stopped will let you know"
+  each.wait_until_stopped()
+  print"it has stopped"
+
+def welcome():
+   print"this script will help to start and stop the services"
+   time.sleep(3)
+
+
+def main():
+    welcome()
+    my_region=raw_input("enter region name")
+print"please wait.. connecting"
+ec2_con_re=get_ec2_con_for_give_region(my_region)
+print"please wait listing all ec2 instances in your region{}".format(my_region)
+list_instances_on_my_region(ec2_con_re)
+in_id=raw_input("now choose id to start or stop")
+start_stop=raw_input("enter start or stop")
+while true:
+    if start_stop not in["start","stop"]:
+      start_stop=raw_input("enter only start or stop")
+      continue
+else:
+   break
+
+if start_stop=="start":
+     start_instance(ec2_con_re,in_id)
+else:
+     stop_instance(ec2_con_re,in_id)
+thank you()
+
+if __name__=='_main_':
+    os.system('cls')
+    main()
