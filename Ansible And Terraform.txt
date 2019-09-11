@@ -92,7 +92,7 @@ Register is to use to store a response to a variable
      delegate_to: localhost 
 
 
-msiexec.exe /i AWSDiscoveryAgentInstaller.msi REGION="us-west-2" KEY_ID="AKIATQXYSOQUID2GOUE4" KEY_SECRET="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" /q
+msiexec.exe /i AWSDiscoveryAgentInstaller.msi REGION="us-west-2" KEY_ID="xxxxxxxxxxxxxxxxxxx" KEY_SECRET="xxxxxxxxxxxxxxx" /q
 
 Needed:
 
