@@ -1,0 +1,229 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1033{\fonttbl{\f0\fnil\fcharset0 Calibri;}{\f1\fnil Calibri;}{\f2\fswiss\fprq2\fcharset0 Arial;}{\f3\fnil\fcharset2 Symbol;}}
+{\colortbl ;\red255\green255\blue255;}
+{\*\generator Riched20 10.0.17763}\viewkind4\uc1 
+\pard\sa200\sl276\slmult1\f0\fs22\lang9 Kubernetes Networking Model\par
+Every Pod has a unique IP\par
+This Pod IP is shared by all the containers in this Pod, and it\rquote s routable from all the other Pods. Ever notice some \ldblquote pause\rdblquote  containers running on your Kubernetes nodes? They are called \ldblquote sandbox containers\rdblquote , whose only job is to reserve and hold a network namespace (netns) which is shared by all the containers in a pod. This way, a pod IP doesn\rquote t change even if a container dies and a new one in created in it\rquote s place.\par
+\par
+The first step is to make sure pods on the same node are able to talk to each other. The idea is then extended to communication across nodes, to the internet and so on.\par
+\par
+Kubernetes Node\par
+(root network namespace)\par
+On every Kubernetes node, which is a linux machine in this case, there\rquote s a root network namespace (root as in base, not the superuser) \f1\emdash  root netns.\par
+The main network interface eth0is in this root netns.\par
+\par
+Kubernetes Node\par
+(pod network namespace)\par
+Similarly, each pod has its own netns, with a virtual ethernet pair connecting it to the root netns. This is basically a pipe-pair with one end in root netns, and other in the pod netns.\par
+We name the pod-end eth0, so the pod doesn\rquote t know about the underlying host and thinks that it has its own root network setup. The other end is named something like vethxxx.\par
+You may list all these interfaces on your node using ifconfig or ip a commands.\par
+\par
+Kubernetes Node\par
+(linux network bridge)\par
+This is done for all the pods on the node. For these pods to talk to each other, a linux ethernet bridge cbr0 is used. Docker uses a similar bridge named docker0.\par
+You may list the bridges using brctl show command.\par
+\par
+Kubernetes Node\par
+(same node pod-to-pod communication)\par
+Assume a packet is going from pod1 to pod2. \par
+1. It leaves pod1\rquote s netns at eth0 and enters the root netns at vethxxx.\par
+2. It\rquote s passed on to cbr0, which discovers the destination using an ARP request, saying \ldblquote who has this IP?\rdblquote\par
+3. vethyyy says it has that IP, so the bridge knows where to forward the packet.\par
+4. The packet reaches vethyyy, crosses the pipe-pair and reaches pod2\rquote s netns.\par
+This is how containers on a node talk to each other. Obviously there are other ways, but this is probably the easiest, and what docker uses as well.\f0\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+\par
+Resume:\par
+\par
+
+\pard\cbpat1\widctlpar\qc\tx3675\b\f2\fs20\lang1033 Syed Dadapeer\par
+
+\pard\cbpat1\widctlpar Summary: \par
+
+\pard\cbpat1{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\widctlpar\fi-360\li360\b0 Almost 5 years of expertise working as DevOps Engineer, Build and Release Engineer in the areas of Continuous Integration (CI), Continuous Delivery (CD), Configuration Management and Application Deployment management.\par
+{\pntext\f3\'B7\tab}Experience with DevOps methodologies and Cloud SE like\~Server provisioning, middleware management, build and deployment automation through tools like\~AWS, Docker, Jenkins, Rundeck, Chef, GIT etc.\par
+{\pntext\f3\'B7\tab}Strong believer of DevOps Methodologies and working towards a core DevOps engineer position, who can bring an end to end work flow of Continuous Integration, Continuous Delivery and Continuous Deployment process for an organization.\par
+{\pntext\f3\'B7\tab}I have designed and implemented\~CI / CD\~pipelines for many java - based applications helping project teams develop, test and deliver software packages fast & reliably.\par
+{\pntext\f3\'B7\tab}Worked with project development teams following\~Agile & Waterfall\~methodologies and can design source code branching, release life cycles and CI/CD pipelines based on pace & project deliverables.\par
+{\pntext\f3\'B7\tab}Experience maintaining\~Jenkins\~Master, configuring, securing and plugin management areas in\~Jenkins.\par
+{\pntext\f3\'B7\tab}Capable of writing\~Chef\~Recipes to automate operational & Deployment activities, written\~Docker\~files, Integrated\~Chef\~&\~Jenkins\~with\~Rundeck\~to provide an end to end cycle of instance provisioning to Application Deployment.\par
+{\pntext\f3\'B7\tab}Developed Python modules to automate processes in AWS (AWS Cloud Formation)\par
+{\pntext\f3\'B7\tab}Written Chef cookbooks and recipes to Provision Several pre-prod environments consisting of Deployment automation,\~AWS EC2\~instance mirroring,\~Web logic and Web Sphere\~domain creations and several proprietary middleware installations\par
+{\pntext\f3\'B7\tab}Experience with multiple integration techniques based on service-oriented architecture such as\~SOA, Web services (REST APIs, SOAP) and other communication interfaces like\~HTTP,\~HTTPS, and\~TCP.\par
+{\pntext\f3\'B7\tab}Extending and maintaining\~OpenStack\~capabilities, improving operational reliability, security mechanisms, or improving scalability/ performance, submitting patches for bug fixes and new features to the community.\par
+{\pntext\f3\'B7\tab}Designed & Implemented\~CI / CD\~using\~Jenkins\~&\~Ansible\~to provide and end-to-end monitoring and deployment.\par
+{\pntext\f3\'B7\tab}Experience in performing Linux/Unix general system maintenance.\par
+
+\pard\cbpat1\widctlpar\li240\b\par
+
+\pard\cbpat1\widctlpar Technical Skills:\par
+
+\pard\widctlpar\fi-3330\li3330 CI Tools:\~\tab\b0 Jenkins, Teamcity, Bamboo\par
+\b Build Systems:\~\tab\b0 Maven, AntVersion Control: GIT, SVN, Perforce\par
+\b Application & Web Servers\tab\b0 Web Logic, Web Sphere, Apache Tomcat, JBOSS, IIS\par
+\b Configuration Management:\~\tab\b0 Chef, Puppet, Ansible\par
+\b Cloud Services:\~\tab\b0 AWS, Open Stack, Azure\par
+\b Containerization Tools:\~\tab\b0 Docker, VMware\par
+\b Virtualization Platforms:\~\tab\b0 Vagrant, Virtual Box\par
+\b Scripting Languages:\~\tab\b0 Shell, Ruby, and Perl\par
+\b Logging:\~\tab\b0 Logstash, Splunk\par
+\b Operating Systems:\~\tab\b0 Linux, Unix, Windows\par
+\b Code Review Tool:\~\tab\b0 Gerrit, Zabbix\par
+\b Languages:\~\tab\b0 Java, C++, Python \par
+
+\pard\cbpat1\widctlpar\par
+\b Education: \par
+
+\pard\cbpat1{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\widctlpar\fi-360\li360\b0 Bachelor in Computer Science from Tribhuvan University, Kathmandu, Nepal in 2009\par
+
+\pard\cbpat1\widctlpar\li360\par
+
+\pard\cbpat1\widctlpar\b Certifications:\par
+\b0 ITIL Certification - Foundation\par
+\par
+\b Professionals Experience \par
+
+\pard\widctlpar Ballad Health, \highlight1 Johnson City, TN \highlight0\tab\tab\tab\tab\tab\tab\tab\tab  Aug 2017 \endash  Present\par
+
+\pard\cbpat1\widctlpar\highlight1 Senior \highlight0 DevOps Engineer\par
+\par
+Responsibilities:\par
+
+\pard\cbpat1{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\widctlpar\fi-360\li360\b0 Written Several\~Chef\~cookbooks from scratch consisting of recipes that can Provision several pre-prod environments consisting of\~Web Logic and Web Sphere\~domain creation, Deployment automation, instance mirroring, and several proprietary middleware installations.\par
+{\pntext\f3\'B7\tab}Integrated Web Sphere\~and\~Web logic\~Servers with the Jenkins and to the cloud servers.\par
+{\pntext\f3\'B7\tab}Written chef recipes to perform middleware binary Installation and Configuration tasks involving\~jdk,\~Tomcat,\~Web Logic and Web Sphere\~binaries installation.\par
+{\pntext\f3\'B7\tab}Responsible for configuring and maintaining all pre-prod environments consisting of complex middleware environments with several variations of\~Tomcat\~installations consisting of several instances in each installation.\par
+{\pntext\f3\'B7\tab}Worked with various custom resources, created roles & environments and using\~chef\~handlers for various auto kickoff requirement jobs.\par
+{\pntext\f3\'B7\tab}Written Unit test cases for chef recipe testing using test\~kitchen,\~foodcritic\~etc.\par
+{\pntext\f3\'B7\tab}Setting up chef repo\rquote  s (local & remote) working with both hosted and standalone server versions.\par
+{\pntext\f3\'B7\tab}Performed tasks like bootstrapping nodes to executing run lists to mirror the new nodes to web or application servers and to run deployments against newly added nodes to the clusters.\par
+{\pntext\f3\'B7\tab}Written several\~Docker\~files to create tomcat along with required version of\~JDK\~container images.\par
+{\pntext\f3\'B7\tab}Worked with\~Docker\~Trusted Registry as repository for our\~Docker\~images and worked with\~Docker\~container networks\par
+{\pntext\f3\'B7\tab}Containerized the\~Docker\~services like\~SSH\~daemon service and familiar with several\~Docker\~command line utilities.\par
+{\pntext\f3\'B7\tab}Tracked different projects using Jira and confluence.\par
+{\pntext\f3\'B7\tab}Utilizes Several\~Docker\~best practices to create base images from scratch and to create clear, readable and maintainable clean\~Docker\~files.\par
+{\pntext\f3\'B7\tab}Worked with several\~AWS\~services like\~EC2, EBS, S3, VPC, Cloud Formation\~and\~Cloud Watch.\par
+{\pntext\f3\'B7\tab}Responsible for creating on-demand\~EC2\~instances.\par
+{\pntext\f3\'B7\tab}Creating Custom\~AMI\rquote s and\~AMI\~tags, modified AMI permissions.\par
+{\pntext\f3\'B7\tab}Working with Security Groups, configuring Inbound /Outbound rules, creating and importing Key Pairs.\par
+{\pntext\f3\'B7\tab}Worked on\~Kubernetes\~with network, storage, and security to provide comprehensive infrastructure and orchestrated container across multiple hosts.\par
+{\pntext\f3\'B7\tab}Used\~AWS S3\~service as Build Artifact repository to created release-based buckets to store various modules/branch based artifact storage.\par
+{\pntext\f3\'B7\tab}Setup various jobs in the\~Jenkins\~for the commit-based builds as well as nightly builds.\par
+{\pntext\f3\'B7\tab}Created\~Wiki\~pages and educated the team about the automation and branching strategies to be followed.\par
+{\pntext\f3\'B7\tab}Deployed Elastic Search, Log Stash and Grafana on Production.\par
+{\pntext\f3\'B7\tab}Implemented code review tools like\~Gerrit. Set up cronjobs for automating the\~logs archiving\~and disc cleanup.\par
+{\pntext\f3\'B7\tab}Implementing new projects builds framework using\~Jenkins and Maven\~as build framework tools.\par
+{\pntext\f3\'B7\tab}Implementing a Continuous Delivery framework using\~Jenkins, Chef, Maven and Nexus\~in Linux environment.\par
+{\pntext\f3\'B7\tab}Backup files and archive files in\~Glacier. Written the scripts on maintenance, search directories and distribution in\~Python.\par
+
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\widctlpar\fi-360\li360 Responsible for the Tagging, Branching, Merging, and admin user access on GITHUB and Migrated applications to the AWS cloud.\par
+
+\pard\cbpat1\widctlpar\b\par
+\par
+\par
+\par
+Delta Credit Union, Atlanta, GA \tab\tab\tab\tab\tab\tab\tab\tab  Dec 2015 \endash  Jul 2017\par
+DevOps Engineer\par
+\par
+Responsibilities:\par
+
+\pard\cbpat1{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\widctlpar\fi-360\li360\b0 Responsible for versioning the source code, releasing binary files, creating and applying labels on source files and release files\par
+{\pntext\f3\'B7\tab}Led\~Jenkins continuous integration server installation\~and configuration for all\~GIT\~Repositories in Linux Environment.\par
+{\pntext\f3\'B7\tab}Automated application packaging and deployment, Provisioning\~EC2\~instances and have worked on all resource areas of\~EC2\~like Instances, Dedicated hosts, volumes, Key pairs, Elastic IP\rquote s, Snapshots, Load Balancers, Security Groups and running\~EC2\~in\~VPC\~by attaching\~EBS.\par
+{\pntext\f3\'B7\tab}Managed Ubuntu 8.10 staging environments.\par
+{\pntext\f3\'B7\tab}Hands on experience in\~AWS\~provisioning and good experience of AWS services like\~EC2, EC2 running in VPC, S3, Glacier, ELB, RDS, Cloud front, cloud watch, Auto scaling, AWS EBS, AWS route 53.\par
+{\pntext\f3\'B7\tab}Integrated\~Amazon Cloud Watch\~with\~Amazon EC2\~instances for monitoring the log files, store them and track metrics.\par
+{\pntext\f3\'B7\tab}Wrote ARM templates to manage infrastructure on Azure.\par
+{\pntext\f3\'B7\tab}Have also worked on writing python scripts to integrate Git and Jenkins with JIRA.\par
+{\pntext\f3\'B7\tab}Configured network on Azure based environment.\par
+{\pntext\f3\'B7\tab}Managed 190\~GIT\~repositories with a version control wrapper tool\~REPO.\par
+{\pntext\f3\'B7\tab}Established coding standards and enforced them through automated tools.\par
+{\pntext\f3\'B7\tab}Configured multiple Windows and Linux slaves for Hudson master\~to distribute the load across a Farm of machines\par
+{\pntext\f3\'B7\tab}Applied the test-driven development methodology while developing which yielded cohesive, loosely coupled and tested code\par
+{\pntext\f3\'B7\tab}Educated team about continuous integration and automated testing practices and supported them throughout development\par
+{\pntext\f3\'B7\tab}Moved applications from Docker Swarm based environment to Mesos \endash  Marathon environment.\par
+{\pntext\f3\'B7\tab}Configured\~Hudson to Implement Nightly builds\~on daily basis and generate change log that includes changes happened from last 24 hours.\par
+{\pntext\f3\'B7\tab}Involved heavily in setting up the CI/CD pipeline using Jenkins, Maven, Nexus, GitHub, CHEF, Terraform and AWS. \par
+{\pntext\f3\'B7\tab}Integrated Testing Tools like\~JUNIT, Emma and Coverity in Hudson\~which provide unit testing and Code coverage with detailed graphical reports\par
+{\pntext\f3\'B7\tab}Connected continuous integration system with\~GIT\~version control repository and Continually build as the check-in\rquote s come from the developer\par
+{\pntext\f3\'B7\tab}Good Knowledge with mobile telecommunication technologies and have hands-on experience with wireless mobile device operating systems:\~Android, Win Mobile\par
+{\pntext\f3\'B7\tab}Resolved dependency issues between different modules in android build system by configuring make files\par
+{\pntext\f3\'B7\tab}Created Multiple\~ANT and Shell (bash)\~scripts for build automation and deployment.\par
+{\pntext\f3\'B7\tab}Defined branching and merging strategies\par
+{\pntext\f3\'B7\tab}Documented the\~SCM\~process and policies of the company and recommended some process changes.\par
+{\pntext\f3\'B7\tab}Enabling the build process by using the Visual studio, specifying the maximum number of builds running on the\~TFS.\par
+{\pntext\f3\'B7\tab}Responsible for writing the\~Release Notes, documenting all useful info about the release: software versions, changes implemented in the release, Defects fixed, Labels applied etc\par
+{\pntext\f3\'B7\tab}Deployed and configured\~Tomcat application server\~to host the wiki website.\par
+{\pntext\f3\'B7\tab}Coordinated software development teams and QA teams on issues and solved the problems.\par
+{\pntext\f3\'B7\tab}Responsible for the Memory Leak and Load Balancing on\~Jenkins\~Server.\par
+{\pntext\f3\'B7\tab}Mentored junior Java developers through Eclipse, ANT,\~GIT, and general Java issues and documented knowledge in several in-house wiki pages.\par
+
+\pard\cbpat1\widctlpar\li360\par
+
+\pard\cbpat1\widctlpar\b Fender, Scottsdale, Arizona \tab\tab\tab\tab\tab\tab\tab\tab\tab Feb 2014 \endash  Dec 2015\par
+Build and Release Coordinator\par
+\par
+Responsibilities:\par
+
+\pard\cbpat1{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\widctlpar\fi-360\li360\b0 Used\~SVN\~as version Control\par
+{\pntext\f3\'B7\tab}Supported Java Project code base and used\~Maven\~as Build tool.\par
+{\pntext\f3\'B7\tab}Migrated\~Ant build.xml\~files to\~Maven POM.xml\par
+{\pntext\f3\'B7\tab}Used Bash as scripts language for Build Automation.\par
+{\pntext\f3\'B7\tab}Maintained\~Ubuntu\~build machines and always keep them updated with latest security fixes.\par
+{\pntext\f3\'B7\tab}Managed Disk space and rebooted builds slaves as regular schedule to keep the health of build slaves\par
+{\pntext\f3\'B7\tab}Used\~Jenkins\~as\~CI\~tool and added 20 Build slaves. Labeled Slaves so that load can divided and branches get their own priority.\par
+{\pntext\f3\'B7\tab}Used Gradle and written python scripts to automate the Build and deployment process\par
+{\pntext\f3\'B7\tab}Installed\~Nagios\~to keep track of the system status like uptime, system load, disk usage and send notifications to team when necessary.\par
+{\pntext\f3\'B7\tab}Worked on the\~.NET\~framework application by using the Internet Information Services\~IIS\~and deploying the files in the framework applications.\par
+{\pntext\f3\'B7\tab}Created branches and tags in Version control\par
+{\pntext\f3\'B7\tab}Merged and resolved conflicts using SVN and helped developers to work with version control tools\par
+{\pntext\f3\'B7\tab}Documented all the process and to do list for improvements\par
+{\pntext\f3\'B7\tab}Worked with Team and supported on-call rotation for pushing the releases in timely manner\par
+
+\pard\cbpat1\widctlpar\par
+\b Abexxa Biologics, Arlington, TX \tab\tab\tab\tab\tab\tab\tab\tab  May 2011 \endash  Jan 2014\par
+System Administrator\par
+\par
+Responsibilities:\par
+
+\pard\cbpat1{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\widctlpar\fi-360\li360\b0 Primary responsibilities include Build and Deployment of the java applications onto different environments\par
+{\pntext\f3\'B7\tab}Installed subversion and trained all the Development team in\~subversion.\par
+{\pntext\f3\'B7\tab}Involved in\~Migration from CVS to SVN.\par
+{\pntext\f3\'B7\tab}Responsible for Managing Source Code, creating tags, Branches and Branch Merges using\~CVS, SVN.\par
+{\pntext\f3\'B7\tab}Responsible for the Code Freeze and Stage Freeze Activities.\par
+{\pntext\f3\'B7\tab}Installed Clear Case, Clear quest on Windows 2000 and XP clients.\par
+{\pntext\f3\'B7\tab}Created VOBs, Dynamic views, Snapshot Views for project teams.\par
+{\pntext\f3\'B7\tab}Helped all developers and other project teams to set views and environments\par
+{\pntext\f3\'B7\tab}Created Builds and deployed builds to different environments based on requests.\par
+{\pntext\f3\'B7\tab}Maintained Dev/QA application environments to ensure all business rules, print logic and compliance issues are well-managed and documented prior to pushing to production\par
+{\pntext\f3\'B7\tab}Implemented UCM solutions for the Confidential Trading System\par
+{\pntext\f3\'B7\tab}Used\~Ant\~as a Build tool.\par
+{\pntext\f3\'B7\tab}Automated Builds using Continuous Integration tool\~Continuum.\par
+{\pntext\f3\'B7\tab}Applied baselines and recommended baselines for each build and releases\par
+{\pntext\f3\'B7\tab}Wrote scripts using\~Perl, shell\~and batch files for Automation of Activities and builds\par
+{\pntext\f3\'B7\tab}Used\~Unix Cron jobs and Cron tab\~for Automation of Build and Deployment\par
+{\pntext\f3\'B7\tab}Integrated clear quest defect tracking tool with the clear case\par
+{\pntext\f3\'B7\tab}Performed merges for each build from Development Branch to Integration Branch.\par
+{\pntext\f3\'B7\tab}Created CM process for installation and verification of Builds after deployment.\par
+{\pntext\f3\'B7\tab}Created the release management plan with the implementation schedule\par
+{\pntext\f3\'B7\tab}Performed and deployed Builds for various Environments like QA, Integration, UAT and Productions Environments.\par
+{\pntext\f3\'B7\tab}Coordinated offshore Teams in India to tests the builds.\par
+{\pntext\f3\'B7\tab}Used\~IBM Web Sphere\~and Tomcat As application servers. \par
+{\pntext\f3\'B7\tab}Packaged the software using packaging tools like install shield and install anywhere.\par
+
+\pard\cbpat1\widctlpar\par
+\fs96\par
+
+\pard\cbpat1\widctlpar\li360\fs20\par
+
+\pard\sa200\sl276\slmult1\f0\fs22\lang9\par
+}
+ 
