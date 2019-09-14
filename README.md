@@ -1,2 +1,3 @@
-# MyRepo
-this is my first Repository
+# maven-project
+
+Simple Maven Project
