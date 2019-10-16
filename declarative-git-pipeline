@@ -5,7 +5,19 @@ pipeline{
             steps{
                 git credentialsId: 'syedd49', url: 'https://github.com/syedd49/MyRepo.git'
             }
-        }    
+        }   
+        stage("Maven Build stage"){
+            steps{
+                sh clean install package
+            }
+        }
+        stage("deploy war file on tomcat server"){
+            steps{
+                ssh scp /target/webapp/*.war ec2-user@172.35.15.24 /opt/apache.tomcat-3.4.5/webapp/
+                shh sh /opt/apache.tomcat-3.4.5/bin/shutdown.sh
+                shh sh /opt/apache.tomcat-3.4.5/bin/startup.sh
+            }       
+        }
         
     }
 }
